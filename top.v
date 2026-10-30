@@ -21,7 +21,9 @@ module top(
   // Memoria de Instrucciones (Etapa Fetch)
   imem imem(
     .a(PC), 
-    .rd(Instr)
+    .a2(32'b0),
+    .rd(Instr),
+    .rd2()
   ); 
 
   // Memoria de Datos (Etapa Memory)

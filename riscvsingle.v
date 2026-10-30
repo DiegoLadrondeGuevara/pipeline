@@ -8,7 +8,7 @@ module riscvpipelined(
     input  [31:0] ReadData
 );
 
-  wire       ALUSrc, RegWrite, Jump, Branch; 
+  wire       ALUSrc, RegWrite, Jump, Branch, MemWrite_D;
   wire [1:0] ResultSrc, ImmSrc; 
   wire [2:0] ALUControl; 
   wire [31:0] Instr_D; // Instrucción que está en la etapa Decode
@@ -19,7 +19,7 @@ module riscvpipelined(
     .funct3(Instr_D[14:12]), 
     .funct7b5(Instr_D[30]), 
     .ResultSrc(ResultSrc), 
-    .MemWrite(MemWrite), 
+    .MemWrite(MemWrite_D),
     .ALUSrc(ALUSrc), 
     .RegWrite(RegWrite), 
     .Jump(Jump),
@@ -35,6 +35,7 @@ module riscvpipelined(
     .ResultSrc(ResultSrc), 
     .ALUSrc(ALUSrc), 
     .RegWrite(RegWrite),
+    .MemWrite_D(MemWrite_D),
     .ImmSrc(ImmSrc), 
     .ALUControl(ALUControl),
     .Branch(Branch),
@@ -42,6 +43,7 @@ module riscvpipelined(
     .PC(PC), 
     .Instr(Instr),
     .Instr_D(Instr_D),       // Salida de IF/ID entregada al controller
+    .MemWrite(MemWrite),
     .ALUResult(DataAdr),     // Salida de la etapa MEM para dmem
     .WriteData(WriteData),   // Salida de la etapa MEM para dmem
     .ReadData(ReadData)
