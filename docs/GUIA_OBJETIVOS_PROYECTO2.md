@@ -1,10 +1,10 @@
 # Guía de objetivos y entregables — Proyecto 2 de Arquitectura de Computadoras
 
-**Actualizada:** 29 de octubre de 2026
+**Actualizada:** 1 de noviembre de 2026
 
 **Meta:** obtener el máximo puntaje mediante tres procesadores correctos, pruebas reproducibles y una explicación técnica que demuestre cada criterio de la rúbrica.
 
-**Avance de implementación (29/10/2026):** el pipeline A pasa las cuatro pruebas dirigidas de E1; también pasan el prototipo independiente de Dual Fetch/Dual Decode con dos ALU preliminares y el Register File doble. Ver [estado técnico y reproducción](../E1_IMPLEMENTACION.md). Ya existe un borrador del [informe PDF de E1](../output/pdf/Informe_E1_Proyecto2.pdf); faltan datos del equipo y revisión antes de presentarlo. El prototipo deberá convertirse en el procesador B funcional para E2.
+**Avance de implementación (01/11/2026):** el pipeline A pasa las cuatro pruebas dirigidas de E1 y una prueba adicional de 37 instrucciones enteras RV32I de cálculo, memoria y control. También pasan el prototipo independiente de Dual Fetch/Dual Decode con dos ALU preliminares y el Register File doble: siete verificaciones en total. Ver [estado técnico y reproducción](E1_IMPLEMENTACION.md). El [informe editable de E1](../informe/Informe_E1_Proyecto2.docx) contiene la evidencia técnica y espacios reservados para datos del equipo y los dos diagramas; todavía no debe subirse a Canvas. El prototipo deberá convertirse en el procesador B funcional para E2.
 
 ## 1. Qué hay que lograr
 
@@ -38,7 +38,7 @@ Los PDF indican sesiones, **no fechas de calendario**. Anotar las fechas y horas
 
 ## 3. Diagnóstico del material recibido
 
-En `pipeline/` hay un esqueleto Verilog de procesador segmentado, un testbench y `riscvtest.dat`. Esta inspección es **estática**: aún no se ha compilado ni simulado el diseño.
+Este diagnóstico registra el estado **inicial** del material recibido, antes de las correcciones y simulaciones de E1. El estado vigente se resume al inicio de esta guía y en [implementación y verificación](E1_IMPLEMENTACION.md).
 
 | Estado observado | Implicación / siguiente objetivo |
 |---|---|

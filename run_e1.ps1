@@ -1,7 +1,10 @@
 $ErrorActionPreference = 'Stop'
 python tests/gen_programs.py
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-$sources = (Get-ChildItem -Filter '*.v').Name
+$sources = @(
+    (Get-ChildItem -Path 'rtl' -Filter '*.v').FullName
+    (Get-ChildItem -Path 'testbenches' -Filter '*.v').FullName
+)
 $iverilogCommand = Get-Command iverilog -ErrorAction SilentlyContinue
 $vvpCommand = Get-Command vvp -ErrorAction SilentlyContinue
 if ($iverilogCommand -and $vvpCommand) {
@@ -27,4 +30,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $iverilog -g2012 -s regfile_dual_tb -o tests/regfile_dual_sim.out $sources
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $vvp tests/regfile_dual_sim.out
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $iverilog -g2012 -s isa_ext_tb -o tests/e1_isa_ext_sim.out $sources
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $vvp tests/e1_isa_ext_sim.out '+PROGRAM=tests/e1_isa_ext.mem'
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

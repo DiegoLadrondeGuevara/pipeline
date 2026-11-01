@@ -1,4 +1,0 @@
-matplotlib
-Pillow
-reportlab
-vcdvcd

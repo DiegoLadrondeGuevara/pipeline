@@ -4,7 +4,8 @@ module top(
     output        MemWrite
 );
 
-  wire [31:0] PC, Instr, ReadData; 
+  wire [31:0] PC, Instr, ReadData;
+  wire [2:0] MemFunct3;
 
   // Instancia del procesador Pipelined (Segmentado)
   riscvpipelined rvpipelined(
@@ -15,6 +16,7 @@ module top(
     .MemWrite(MemWrite), // Trae la señal MemWrite de la etapa MEM (MemWrite_M)
     .DataAdr(DataAdr),   // Trae la dirección calculada de la etapa MEM (ALUResult_M)
     .WriteData(WriteData),// Trae los datos a escribir de la etapa MEM (WriteData_M)
+    .MemFunct3(MemFunct3),
     .ReadData(ReadData)
   ); 
 
@@ -32,6 +34,7 @@ module top(
     .we(MemWrite), 
     .a(DataAdr), 
     .wd(WriteData), 
+    .funct3(MemFunct3),
     .rd(ReadData)
   ); 
 

@@ -18,8 +18,9 @@ module dualissue_prelim(
   wire [31:0] instr0_f, instr1_f;
   imem fetch_mem(.a(PC0_F), .a2(PC1_F), .rd(instr0_f), .rd2(instr1_f));
 
-  wire [1:0] result0_d, result1_d, imm0_src_d, imm1_src_d;
-  wire [2:0] alu0_ctrl_d, alu1_ctrl_d;
+  wire [1:0] result0_d, result1_d;
+  wire [2:0] imm0_src_d, imm1_src_d;
+  wire [3:0] alu0_ctrl_d, alu1_ctrl_d;
   wire mem0_d, mem1_d, branch0_d, branch1_d, jump0_d, jump1_d;
   wire alu0_src_d, alu1_src_d, write0_d, write1_d;
   controller decode0(.op(Instr0_D[6:0]), .funct3(Instr0_D[14:12]),
@@ -41,7 +42,7 @@ module dualissue_prelim(
   extend imm1(.instr(Instr1_D[31:7]), .immsrc(imm1_src_d), .immext(imm1_d));
 
   reg [31:0] pc0_e_reg, pc1_e_reg, ra0_e, rb0_e, ra1_e, rb1_e, imm0_e, imm1_e;
-  reg [2:0] alu0_ctrl_e, alu1_ctrl_e;
+  reg [3:0] alu0_ctrl_e, alu1_ctrl_e;
   reg alu0_src_e, alu1_src_e, valid0_e_reg, valid1_e_reg;
   assign PC0_E = pc0_e_reg;
   assign PC1_E = pc1_e_reg;

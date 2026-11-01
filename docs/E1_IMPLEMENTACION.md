@@ -30,9 +30,9 @@ Desde `pipeline/`, con Python e Icarus Verilog (`iverilog` y `vvp`) instalados:
 ./run_e1.ps1
 ```
 
-El script genera los `.mem` desde `tests/gen_programs.py`, compila tres testbenches y ejecuta seis verificaciones. Los archivos `tests/e1_*.S` son listados Assembly de cada programa; los `.mem` contienen las palabras que carga `imem`. Los VCD se guardan en `tests/` y se pueden abrir con GTKWave u otro visor compatible. En `imem.v` también se puede elegir cualquier programa con `+PROGRAM=ruta/al/programa.mem`. El testbench Single-Issue permite `+CASE=1..4` y `+VCD=ruta.vcd`.
+El script genera los `.mem` desde `tests/gen_programs.py`, compila cuatro testbenches y ejecuta siete verificaciones. Los archivos `tests/e1_*.S` son listados Assembly de cada programa; los `.mem` contienen las palabras que carga `imem`. Los VCD se guardan en `tests/` y se pueden abrir con GTKWave u otro visor compatible. En `imem.v` también se puede elegir cualquier programa con `+PROGRAM=ruta/al/programa.mem`. El testbench Single-Issue permite `+CASE=1..4` y `+VCD=ruta.vcd`.
 
-Para regenerar el borrador del informe E1 con las waveforms reales, después de las pruebas ejecutar `pip install -r requirements-report.txt` y `python tools/build_e1_report.py`. El archivo resultante está en `output/pdf/Informe_E1_Proyecto2.pdf`.
+El informe editable y el PDF se guardan en `informe/`. Las gráficas provienen de los VCD generados por las simulaciones, no de dibujos manuales.
 
 ## Evidencia obtenida en simulación
 
@@ -44,12 +44,12 @@ Para regenerar el borrador del informe E1 con las waveforms reales, después de 
 | `e1_4` | `beq` tomado/no tomado, `jal`, link y eliminación de stores de camino incorrecto. | PASS; 13 ciclos; 2 redirecciones; sin escritura a dirección 104. | `PCSrc_E`, `PCTarget_E`, `Valid_D/E`, `MemWrite`, `Rd_W`. |
 | `e1_dual` | Fetch/Decode de dos pares 0/4 y 8/12, dos resultados ALU, hold y redirect. | PASS. | `PC0_F`, `PC1_F`, `Instr0_D`, `Instr1_D`, `PC0_E`, `PC1_E`, `ALUResult0_E`, `ALUResult1_E`. |
 | `regfile_dual` | Cuatro lecturas, dos escrituras, `x0` fijo y prioridad de la vía joven. | PASS. | Salida textual del testbench. |
+| `e1_isa_ext` | Instrucciones enteras adicionales: LUI/AUIPC/JALR, seis branches, comparaciones signed/unsigned, XOR, SRA y accesos byte/halfword. | PASS; 63 ciclos; registros y memoria correctos. | `PC_F`, `MemFunct3_M`, `ReadData_W`, `ALUResult_E`. |
 
 Los ciclos de la tabla cuentan desde la liberación de reset hasta el store de éxito; **no son todavía métricas de rendimiento A/B/C**. Para E2/EF se deberá definir un punto de terminación común y contar instrucciones retiradas válidas.
 
 ## Alcance y pendientes
 
-- El conjunto implementado es el subconjunto del código base: `lw`, `sw`, `beq`, `jal`, `addi`, operaciones R `add/sub/slt/and/or/sll/srl` y las variantes I que decodifica `aludec.v`. No afirmar cobertura de RV32I completo hasta implementar y probar instrucciones restantes.
-- El programa legado `riscvtest.dat` se conserva como material recibido. El antiguo testbench esperaba un store de 25 en dirección 100; con la memoria ampliada y el pipeline corregido, ese programa escribe en 96 y 292 y no satisface esa condición. Los programas E1 nuevos tienen resultados esperados explícitos y son los usados en la regresión.
-- Hay un **borrador PDF de E1** con diagrama, waveforms y resultados interpretados. Antes de entregarlo faltan nombres de los integrantes, fecha real, revisión del equipo y cualquier ajuste de alcance ISA indicado por el profesor.
+- El núcleo A implementa y prueba 37 instrucciones de cálculo, transferencia y control del RV32I base: todas las operaciones R e I de ALU, LUI/AUIPC, JAL/JALR, seis branches, cinco loads y tres stores. `FENCE` actúa como NOP en este sistema sin otros agentes de memoria; no hay interfaz de excepciones para `ECALL`/`EBREAK`, ni detección de accesos desalineados. No afirmar cobertura de RV32I completo sin esos elementos.
+- Hay un **informe técnico editable de E1** en `informe/Informe_E1_Proyecto2.docx`, con waveforms y valores intermedios extraídos de la simulación. Antes de entregarlo en Canvas faltan nombres, curso, fecha real, los dos diagramas encargados a los compañeros y cualquier ajuste de alcance ISA indicado por el profesor.
 - Para E2, implementar emisión dinámica y reagrupamiento antes de conectar el prototipo de doble vía a `top.v`. El top actual sigue ejecutando A, y eso es intencional para poder conservarlo como referencia funcional.

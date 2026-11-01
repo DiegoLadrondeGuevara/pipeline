@@ -1,13 +1,15 @@
 module datapath(
     input clk, reset,
     input [1:0] ResultSrc,
-    input ALUSrc, RegWrite, MemWrite_D, Branch, Jump,
-    input [1:0] ImmSrc,
-    input [2:0] ALUControl,
+    input ALUSrc, RegWrite, MemWrite_D, Branch, Jump, JumpReg,
+    input [1:0] SrcASel,
+    input [2:0] ImmSrc, MemFunct3_D,
+    input [3:0] ALUControl,
     output [31:0] PC,
     input [31:0] Instr,
     output [31:0] Instr_D,
     output MemWrite,
+    output [2:0] MemFunct3_M,
     output [31:0] ALUResult, WriteData,
     input [31:0] ReadData
 );
@@ -25,7 +27,7 @@ module datapath(
   wire [6:0] Op_D  = Instr_D[6:0];
   wire UsesRs1_D = (Op_D == 7'b0110011) || (Op_D == 7'b0010011) ||
                    (Op_D == 7'b0000011) || (Op_D == 7'b0100011) ||
-                   (Op_D == 7'b1100011);
+                   (Op_D == 7'b1100011) || (Op_D == 7'b1100111);
   wire UsesRs2_D = (Op_D == 7'b0110011) || (Op_D == 7'b0100011) ||
                    (Op_D == 7'b1100011);
   wire [31:0] RD1_D, RD2_D, ImmExt_D;
@@ -39,9 +41,11 @@ module datapath(
   // ID/EX. A bubble clears every side effect and the valid bit.
   reg [31:0] RD1_E, RD2_E, ImmExt_E, PC_E, PCPlus4_E;
   reg [4:0] Rs1_E, Rs2_E, Rd_E;
-  reg [2:0] ALUControl_E;
+  reg [3:0] ALUControl_E;
+  reg [2:0] Funct3_E, Funct3_M;
+  reg [1:0] SrcASel_E;
   reg [1:0] ResultSrc_E;
-  reg RegWrite_E, MemWrite_E, ALUSrc_E, Branch_E, Jump_E, Valid_E;
+  reg RegWrite_E, MemWrite_E, ALUSrc_E, Branch_E, Jump_E, JumpReg_E, Valid_E;
 
   // EX/MEM and MEM/WB.
   reg [31:0] ALUResult_M, WriteData_M, PCPlus4_M;
@@ -73,17 +77,33 @@ module datapath(
                        (ForwardAE == 2'b01) ? Result_W : RD1_E;
   wire [31:0] ForwardedB_E = (ForwardBE == 2'b10) ? ForwardResult_M :
                              (ForwardBE == 2'b01) ? Result_W : RD2_E;
+  wire [31:0] ALUOperandA_E = (SrcASel_E == 2'd1) ? PC_E :
+                              (SrcASel_E == 2'd2) ? 32'd0 : SrcA_E;
   wire [31:0] SrcB_E = ALUSrc_E ? ImmExt_E : ForwardedB_E;
   wire [31:0] ALUResult_E;
   wire Zero_E;
-  wire [31:0] PCTarget_E = PC_E + ImmExt_E;
-  alu exec_alu(.a(SrcA_E), .b(SrcB_E), .alucontrol(ALUControl_E),
+  wire [31:0] PCTarget_E = JumpReg_E ? (ALUResult_E & 32'hfffffffe) :
+                           (PC_E + ImmExt_E);
+  reg BranchTaken_E;
+  always @* begin
+    case (Funct3_E)
+      3'b000: BranchTaken_E = (SrcA_E == ForwardedB_E); // BEQ
+      3'b001: BranchTaken_E = (SrcA_E != ForwardedB_E); // BNE
+      3'b100: BranchTaken_E = ($signed(SrcA_E) < $signed(ForwardedB_E));
+      3'b101: BranchTaken_E = ($signed(SrcA_E) >= $signed(ForwardedB_E));
+      3'b110: BranchTaken_E = (SrcA_E < ForwardedB_E);
+      3'b111: BranchTaken_E = (SrcA_E >= ForwardedB_E);
+      default: BranchTaken_E = 0;
+    endcase
+  end
+  alu exec_alu(.a(ALUOperandA_E), .b(SrcB_E), .alucontrol(ALUControl_E),
                .result(ALUResult_E), .zero(Zero_E));
-  assign PCSrc_E = Valid_E && (Jump_E || (Branch_E && Zero_E));
+  assign PCSrc_E = Valid_E && (Jump_E || (Branch_E && BranchTaken_E));
 
   assign ALUResult = ALUResult_M;
   assign WriteData = WriteData_M;
   assign MemWrite = Valid_M && MemWrite_M && !reset;
+  assign MemFunct3_M = Funct3_M;
   assign RegWrite_W = Valid_W && RegWrite_W_reg && !reset;
   assign Result_W = (ResultSrc_W == 2'b01) ? ReadData_W :
                     (ResultSrc_W == 2'b10) ? PCPlus4_W : ALUResult_W;
@@ -94,8 +114,9 @@ module datapath(
       Instr_D_reg <= 32'h00000013; PC_D <= 0; PCPlus4_D <= 0; Valid_D <= 0;
       RD1_E <= 0; RD2_E <= 0; ImmExt_E <= 0; PC_E <= 0; PCPlus4_E <= 0;
       Rs1_E <= 0; Rs2_E <= 0; Rd_E <= 0; ALUControl_E <= 0;
+      Funct3_E <= 0; Funct3_M <= 0; SrcASel_E <= 0;
       ResultSrc_E <= 0; RegWrite_E <= 0; MemWrite_E <= 0;
-      ALUSrc_E <= 0; Branch_E <= 0; Jump_E <= 0; Valid_E <= 0;
+      ALUSrc_E <= 0; Branch_E <= 0; Jump_E <= 0; JumpReg_E <= 0; Valid_E <= 0;
       ALUResult_M <= 0; WriteData_M <= 0; PCPlus4_M <= 0; Rd_M <= 0;
       ResultSrc_M <= 0; RegWrite_M <= 0; MemWrite_M <= 0; Valid_M <= 0;
       ALUResult_W <= 0; ReadData_W <= 0; PCPlus4_W <= 0; Rd_W <= 0;
@@ -114,22 +135,26 @@ module datapath(
       if (PCSrc_E || Stall_D) begin
         RD1_E <= 0; RD2_E <= 0; ImmExt_E <= 0; PC_E <= 0; PCPlus4_E <= 0;
         Rs1_E <= 0; Rs2_E <= 0; Rd_E <= 0; ALUControl_E <= 0;
+        Funct3_E <= 0; SrcASel_E <= 0;
         ResultSrc_E <= 0; RegWrite_E <= 0; MemWrite_E <= 0;
-        ALUSrc_E <= 0; Branch_E <= 0; Jump_E <= 0; Valid_E <= 0;
+        ALUSrc_E <= 0; Branch_E <= 0; Jump_E <= 0; JumpReg_E <= 0; Valid_E <= 0;
       end else begin
         RD1_E <= RD1_D; RD2_E <= RD2_D; ImmExt_E <= ImmExt_D;
         PC_E <= PC_D; PCPlus4_E <= PCPlus4_D;
         Rs1_E <= Rs1_D; Rs2_E <= Rs2_D; Rd_E <= Rd_D;
         ALUControl_E <= ALUControl; ResultSrc_E <= ResultSrc;
+        Funct3_E <= MemFunct3_D; SrcASel_E <= SrcASel;
         RegWrite_E <= RegWrite && Valid_D;
         MemWrite_E <= MemWrite_D && Valid_D;
         ALUSrc_E <= ALUSrc; Branch_E <= Branch && Valid_D;
-        Jump_E <= Jump && Valid_D; Valid_E <= Valid_D;
+        Jump_E <= Jump && Valid_D; JumpReg_E <= JumpReg && Valid_D;
+        Valid_E <= Valid_D;
       end
 
       ALUResult_M <= ALUResult_E;
       WriteData_M <= ForwardedB_E; // Includes store-data forwarding.
       PCPlus4_M <= PCPlus4_E; Rd_M <= Rd_E; ResultSrc_M <= ResultSrc_E;
+      Funct3_M <= Funct3_E;
       RegWrite_M <= RegWrite_E; MemWrite_M <= MemWrite_E; Valid_M <= Valid_E;
 
       ALUResult_W <= ALUResult_M; ReadData_W <= ReadData;

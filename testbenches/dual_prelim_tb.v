@@ -16,12 +16,19 @@ module dual_prelim_tb;
     reset = 0;
     @(posedge clk); #1;
     if (pc0f !== 8 || pc1f !== 12 ||
-        instr0d !== 32'h00a00093 || instr1d !== 32'h00f00113)
+        instr0d !== 32'h00a00093 || instr1d !== 32'h00f00113 ||
+        dut.imm0_d !== 10 || dut.imm1_d !== 15 ||
+        dut.alu0_ctrl_d !== 0 || dut.alu1_ctrl_d !== 0 ||
+        !dut.write0_d || !dut.write1_d)
       $fatal(1, "Dual Fetch/Decode pair 0 failed");
     @(posedge clk); #1;
-    if (!valid0 || !valid1 || pc0e !== 0 || pc1e !== 4 ||
+    if (instr0d !== 32'h00400193 || instr1d !== 32'h00500213 ||
+        dut.imm0_d !== 4 || dut.imm1_d !== 5 ||
+        dut.alu0_ctrl_d !== 0 || dut.alu1_ctrl_d !== 0 ||
+        !dut.write0_d || !dut.write1_d ||
+        !valid0 || !valid1 || pc0e !== 0 || pc1e !== 4 ||
         result0 !== 10 || result1 !== 15)
-      $fatal(1, "Preliminary two-lane EX pair 0 failed");
+      $fatal(1, "Dual Fetch/Decode pair 1 or preliminary EX pair 0 failed");
     @(posedge clk); #1;
     if (!valid0 || !valid1 || pc0e !== 8 || pc1e !== 12 ||
         result0 !== 4 || result1 !== 5)
