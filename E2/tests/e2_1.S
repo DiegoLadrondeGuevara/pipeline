@@ -1,0 +1,11 @@
+addi x1, x0, 10                  # PC=000
+addi x2, x0, 15                  # PC=004
+add x3, x1, x2                   # PC=008
+addi x4, x0, 7                   # PC=012
+addi x5, x3, 1                   # PC=016
+addi x5, x4, 2                   # PC=020
+addi x0, x0, 99                  # PC=024
+addi x6, x5, 1                   # PC=028
+addi x7, x6, 1                   # PC=032
+addi x8, x7, 1                   # PC=036
+sw x8, 96(x0)                    # PC=040
