@@ -10,6 +10,10 @@ module e2_compare_tb;
     .DataAdr(adr_a),.MemWrite(we_a));
   dualissue b(.clk(clk),.reset(reset));
   always #5 clk=~clk;
+  initial begin
+    $dumpfile("tests/e2_compare.vcd");
+    $dumpvars(0,e2_compare_tb);
+  end
   always @(posedge clk) if (!reset) begin
     cycle=cycle+1;
     if (we_a && adr_a==100 && cycles_a==0) cycles_a=cycle;

@@ -1,2 +1,4 @@
 __pycache__/
 e1_*.vcd
+!tools/
+!tools/*.py
