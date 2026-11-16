@@ -1,0 +1,41 @@
+[*]
+[*] GTKWave Analyzer v3.3.127
+[dumpfile] "C:/Users/PC/Documents/Arqui/pipeline/EF/resultados/waveforms/propio_C.vcd"
+[timestart] 170000
+[size] 1280 800
+[pos] 0 0
+*-14.6 170000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 80
+[signals_width] 220
+[sst_expanded] 1
+[sst_vpaned_height] 260
+@28
+propio_tb.clk
+@22
+propio_tb.dut.fetch_pc[31:0]
+@28
+propio_tb.dut.btb_hit0
+@28
+propio_tb.dut.btb_hit1
+@28
+propio_tb.dut.predict0
+@28
+propio_tb.dut.predict1
+@22
+propio_tb.dut.btb_target0[31:0]
+@22
+propio_tb.dut.btb_target1[31:0]
+@28
+propio_tb.dut.control_resolved
+@22
+propio_tb.dut.branch_pc[31:0]
+@22
+propio_tb.dut.predicted_next_pc[31:0]
+@22
+propio_tb.dut.actual_next_pc[31:0]
+@28
+propio_tb.dut.redirect
+@22
+propio_tb.dut.btb_prediction_count[31:0]
+@22
+propio_tb.dut.btb_mispredict_count[31:0]

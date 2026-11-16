@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer v3.3.127
+[dumpfile] "C:/Users/PC/Documents/Arqui/pipeline/EF/resultados/waveforms/docente_C.vcd"
+[timestart] 2380000
+[size] 1280 850
+[pos] 0 0
+*-14.6 2380000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 80
+[signals_width] 230
+[sst_expanded] 1
+[sst_vpaned_height] 280
+@28
+docente_tb.clk
+@22
+docente_tb.cycles[31:0]
+@22
+docente_tb.wave_pc_mem[31:0]
+@28
+docente_tb.mem_write
+@22
+docente_tb.mem_address[31:0]
+@22
+docente_tb.wave_store_data[31:0]
+@22
+docente_tb.checkpoint_passed[3:0]
+@22
+docente_tb.wave_x19[31:0]
+@22
+docente_tb.wave_x20[31:0]
+@22
+docente_tb.wave_x21[31:0]
+@22
+docente_tb.wave_x22[31:0]
+@22
+docente_tb.wave_x24[31:0]
+@22
+docente_tb.wave_x26[31:0]
+@22
+docente_tb.wave_mem_6[31:0]
+@22
+docente_tb.wave_mem_7[31:0]
+@22
+docente_tb.wave_mem_8[31:0]

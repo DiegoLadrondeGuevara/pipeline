@@ -1,0 +1,10 @@
+addi x1, x0, 1                   # PC=000
+beq x1, x1, 12                   # PC=004
+sw x1, 104(x0)                   # PC=008
+addi x2, x0, 99                  # PC=012
+addi x2, x0, 25                  # PC=016
+jal x3, 12                       # PC=020
+sw x1, 104(x0)                   # PC=024
+addi x2, x0, 99                  # PC=028
+beq x1, x0, 8                    # PC=032
+sw x2, 100(x0)                   # PC=036
