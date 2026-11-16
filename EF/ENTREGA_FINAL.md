@@ -9,7 +9,7 @@
 | Procesador C, Dual-Issue con BTB | `C_dual_issue_optimizado/rtl/`, incluido `btb.v`; pruebas en `C_dual_issue_optimizado/testbenches/` y `tests/` | Verificado |
 | Assembly y memorias comunes a A/B/C | `programas/propio.S`, `propio.mem`, `docente.S`, `docente.mem`; PDF original del docente en la misma carpeta | Verificado |
 | Testbenches finales de los dos programas | `testbenches/propio_tb.v` y `docente_tb.v`; `run_code_checks.ps1` recompila y ejecuta las seis corridas | Verificado |
-| Resultados y waveforms interpretadas | `resultados/comparacion_codigo.md`, `resultados/waveforms/`, secciones 8.1–8.7 del informe | Verificado |
+| Resultados y waveforms interpretadas | `resultados/comparacion_codigo.md`, `resultados/waveforms/`, secciones 8.1–8.7 del informe; tres ondas A/B/C del docente para la PPT | Verificado |
 | Informe final PDF | `informe/Informe_Final_Proyecto2_BTB.pdf` | Presente, 14 páginas |
 | Informe final editable | `informe/Informe_Final_Proyecto2_BTB_editable.docx` | Presente; conservar |
 | Presentación final PDF | `presentacion/` | **Pendiente** |
@@ -29,6 +29,7 @@ El 16/11/2026 pasó las seis corridas, la prueba unitaria del BTB, cuatro casos 
 - `BTB_DOCUMENTACION.md`: diseño, integración, pruebas y límites del BTB.
 - `programas/assemble_docente.py`: regenera ambos `.mem` desde los Assembly.
 - `run_propio_wave.ps1`, `run_docente_wave.ps1` y archivos `.gtkw`/`.vcd`: reproducen e inspeccionan las ondas de C.
+- `run_docente_comparativa.ps1` y `resultados/waveforms/comparativa_docente/`: reproducen el docente en A/B/C con VCD y tres imágenes centradas en el mismo salto; su `README.md` explica las señales y aporta texto para la presentación.
 - `informe/build_*.py` y `informe/datapath_e2_refinado.png`: fuentes de construcción del informe.
 - `resultados/medicion_docente_preliminar.md`: medición intermedia; la comparación consolidada está en `comparacion_codigo.md`.
 

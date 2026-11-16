@@ -43,7 +43,43 @@ module docente_tb;
 `ifdef WAVES
   reg [1023:0] vcd_file;
   reg [3:0] checkpoint_passed=0;
-`ifndef SINGLE
+  // Probes comunes para comparar el mismo salto en A, B y C.
+`ifdef SINGLE
+  wire [31:0] wave_fetch_pc = dut.PC;
+  wire [31:0] wave_pc_d0 = dut.rvpipelined.dp.PC_D;
+  wire [31:0] wave_instr_d0 = dut.rvpipelined.dp.Instr_D_reg;
+  wire wave_issue0 = dut.rvpipelined.dp.Valid_D &&
+                     !dut.rvpipelined.dp.Stall_D && !dut.rvpipelined.dp.PCSrc_E;
+  wire wave_issue1 = 1'b0;
+  wire wave_stall_load = dut.rvpipelined.dp.Stall_D;
+  wire wave_control_resolved = dut.rvpipelined.dp.Valid_E &&
+      (dut.rvpipelined.dp.Branch_E || dut.rvpipelined.dp.Jump_E);
+  wire [31:0] wave_branch_pc = dut.rvpipelined.dp.PC_E;
+  wire [31:0] wave_predicted_next_pc = wave_branch_pc + 32'd4;
+  wire [31:0] wave_actual_next_pc = dut.rvpipelined.dp.PCSrc_E ?
+      dut.rvpipelined.dp.PCTarget_E : wave_predicted_next_pc;
+  wire wave_redirect = dut.rvpipelined.dp.PCSrc_E;
+  wire [31:0] wave_x19 = dut.rvpipelined.dp.rf.rf[19];
+`else
+  wire [31:0] wave_fetch_pc = dut.fetch_pc;
+  wire [31:0] wave_pc_d0 = dut.pc_d[0];
+  wire [31:0] wave_pc_d1 = dut.pc_d[1];
+  wire [31:0] wave_instr_d0 = dut.instr_d[0];
+  wire [31:0] wave_instr_d1 = dut.instr_d[1];
+  wire wave_issue0 = dut.issue0;
+  wire wave_issue1 = dut.issue1;
+  wire wave_stall_load = dut.stall_load;
+  wire wave_control_resolved = dut.control_e0 || dut.control_e1;
+  wire [31:0] wave_branch_pc = dut.branch_pc;
+`ifdef OPTIMIZED
+  wire [31:0] wave_predicted_next_pc = dut.predicted_next_pc;
+  wire [31:0] wave_actual_next_pc = dut.actual_next_pc;
+`else
+  wire [31:0] wave_predicted_next_pc = wave_branch_pc + 32'd4;
+  wire [31:0] wave_actual_next_pc = dut.redirect ?
+      dut.redirect_pc : wave_predicted_next_pc;
+`endif
+  wire wave_redirect = dut.redirect;
   // Named probes expose the stage-A state and the active memory lane.
   wire [31:0] wave_pc_mem = dut.mem_lane1 ? dut.pc_m[1] : dut.pc_m[0];
   wire [31:0] wave_store_data = dut.mem_store_data;
